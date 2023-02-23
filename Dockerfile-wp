@@ -1,0 +1,30 @@
+FROM wordpress:latest
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+# Download the SQL data export file
+RUN curl -L -o /docker-entrypoint-initdb.d/db-file.sql https://example.com/path/to/db-file.sql
+
+# Set the WordPress database credentials
+ENV WORDPRESS_DB_HOST db
+ENV WORDPRESS_DB_NAME yourdbname
+ENV WORDPRESS_DB_USER yourdbuser
+ENV WORDPRESS_DB_PASSWORD yourdbpassword
+
+# Install Nginx
+RUN apt-get install -y nginx
+
+# Copy Nginx configuration file
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Remove the default Nginx configuration file
+RUN rm /etc/nginx/sites-enabled/default
+
+# Expose port 80
+EXPOSE 80
+
+# Do I need to do this?
+
+# Start Nginx and PHP-FPM
+CMD service nginx start && php-fpm
